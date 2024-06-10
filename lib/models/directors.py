@@ -7,3 +7,13 @@ class Director:
 
     def __repr__(self):
         return f"Director(id={self.director_id}, name='{self.name}', bio='{self.bio}', birth_year={self.birth_year})"
+    
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        if not value:
+            raise ValueError("Name cannot be empty")
+        self._name = value
