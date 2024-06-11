@@ -49,7 +49,7 @@ class Doctor:
     def create_table(cls):
         sql = """
             CREATE TABLE IF NOT EXISTS doctors (
-                doctor_id INTEGER PRIMARY KEY,
+                doctor_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT,
                 specialization TEXT,
                 years_of_experience INTEGER
@@ -64,12 +64,76 @@ class Doctor:
         CURSOR.execute(sql)
         CONN.commit()
 
+    def save(self):
+        sql = """
+        INSERT INTO doctors (name, specialization, years_of_experience)
+        VALUES (?, ?, ?);
+        """
+        CURSOR.execute(sql, (self.name, self.specialization, self.years_of_experience))
+        CONN.commit()
+        self.doctor_id = CURSOR.lastrowid  
+        type(self).all[self.doctor_id] = self
+
     @classmethod
     def create(cls, name, specialization, years_of_experience):
+        doctor = cls(name, specialization, years_of_experience)
+        doctor.save()
+        return doctor
+    
+    def update(self):
         sql = """
-            INSERT INTO doctors (name, specialization, years_of_experience)
-            VALUES (?, ?, ?)
+            UPDATE doctors
+            SET name = ?, specialization = ?, years_of_experience = ?
+            WHERE doctor_id = ?;
         """
-        CURSOR.execute(sql, (name, specialization, years_of_experience))
+        CURSOR.execute(sql, (self.name, self.specialization, self.years_of_experience, self.id))
         CONN.commit()
-        return cls(name, specialization, years_of_experience, CURSOR.lastrowid)
+
+    def delete(self):
+        sql = """
+            DELETE FROM doctors
+            WHERE doctor_id = ?;
+        """
+        CURSOR.execute(sql, (self.id,))
+        CONN.commit()
+        del type(self).all[self.id]
+        self.id = None
+
+    @classmethod
+    def instance_from_db(cls, row):
+        doctor = cls.all.get(row[0])
+        if doctor:
+            doctor.name = row[1]
+            doctor.specialization = row[2]
+            doctor.years_of_experience = row[3]
+        else:
+            doctor = cls(row[1], row[2], row[3])
+            doctor.id = row[0]
+            cls.all[doctor.id] = doctor
+        return doctor
+    
+    @classmethod
+    def get_all(cls):
+        sql = "SELECT * FROM doctors;"
+        rows = CURSOR.execute(sql).fetchall()
+        return [cls.instance_from_db(row) for row in rows]
+
+    @classmethod
+    def find_by_name(cls, name):
+        sql = "SELECT * FROM doctors WHERE name = ?;"
+        row = CURSOR.execute(sql, (name,)).fetchone()
+        return cls.instance_from_db(row) if row else None
+
+    
+    
+    @classmethod
+    def find_by_id(cls, doctor_id):
+        sql = "SELECT * FROM doctors WHERE doctor_id = ?;"
+        row = CURSOR.execute(sql, (doctor_id,)).fetchone()
+        return cls.instance_from_db(row) if row else None
+    
+    def patients(self):
+        from models.patients import Patient
+        sql = "SELECT * FROM patients WHERE doctor_id = ?;"
+        rows = CURSOR.execute(sql, (self.id,)).fetchall()
+        return [Patient.instance_from_db(row) for row in rows]

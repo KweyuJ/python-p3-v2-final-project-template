@@ -1,16 +1,19 @@
 from config.__init__ import CURSOR, CONN
 
+
 class Patient:
     all = {}
 
-    def __init__(self, name, age, doctor_id, patient_id=None):
+    def __init__(self, name, age, gender, weight, doctor_id, patient_id=None):
         self.patient_id = patient_id
         self.name = name
         self.age = age
+        self.gender = gender
+        self.weight = weight
         self.doctor_id = doctor_id
 
     def __repr__(self):
-        return f"<Patient {self.patient_id}: {self.name}, {self.age}, {self.doctor_id}>"
+        return f"<Patient {self.patient_id}: name={self.name}, age={self.age}, gender={self.gender}, weight={self.weight}, doctorid={self.doctor_id}>"
 
     @property
     def name(self):
@@ -35,6 +38,28 @@ class Patient:
             raise ValueError("Age must be a non-negative integer")
 
     @property
+    def gender(self):
+        return self._gender
+
+    @gender.setter
+    def gender(self, gender):
+        if gender in ("Male", "Female", "Other"):
+            self._gender = gender
+        else:
+            raise ValueError("Gender must be 'Male', 'Female', or 'Other'")
+
+    @property
+    def weight(self):
+        return self._weight
+
+    @weight.setter
+    def weight(self, weight):
+        if isinstance(weight, (int, float)) and weight >= 0:
+            self._weight = weight
+        else:
+            raise ValueError("Weight must be a non-negative number")
+
+    @property
     def doctor_id(self):
         return self._doctor_id
 
@@ -49,9 +74,11 @@ class Patient:
     def create_table(cls):
         sql = """
             CREATE TABLE IF NOT EXISTS patients (
-            patient_id INTEGER PRIMARY KEY,
+            patient_id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
             age INTEGER,
+            gender TEXT,
+            weight REAL,
             doctor_id INTEGER,
             FOREIGN KEY (doctor_id) REFERENCES doctors (doctor_id))
         """
@@ -68,16 +95,65 @@ class Patient:
 
     def save(self):
         sql = """
-            INSERT INTO patients (name, age, doctor_id)
-            VALUES (?, ?, ?)
+            INSERT INTO patients (name, age, gender, weight, doctor_id)
+            VALUES (?, ?, ?, ?, ?)
         """
-        CURSOR.execute(sql, (self.name, self.age, self.doctor_id))
+        CURSOR.execute(
+            sql, (self.name, self.age, self.gender, self.weight, self.doctor_id)
+        )
         CONN.commit()
         self.patient_id = CURSOR.lastrowid
         type(self).all[self.patient_id] = self
 
     @classmethod
-    def create(cls, name, age, doctor_id):
-        patient = cls(name, age, doctor_id)
+    def create(cls, name, age, gender, weight, doctor_id):
+        patient = cls(name, age, gender, weight, doctor_id)
         patient.save()
         return patient
+
+    def update(self):
+        sql = """
+            UPDATE patients
+            SET name = ?, age = ?, doctor_id = ?
+            WHERE patient_id = ?;
+        """
+        CURSOR.execute(sql, (self.name, self.age, self.doctor_id, self.patient_id))
+        CONN.commit()
+
+    def delete(self):
+        sql = "DELETE FROM patients WHERE patient_id = ?;"
+        CURSOR.execute(sql, (self.patient_id,))
+        CONN.commit()
+        del type(self).all[self.patient_id]
+        self.patient_id = None
+
+    @classmethod
+    def instance_from_db(cls, row):
+        patient = cls.all.get(row[0])
+        if patient:
+            patient.name = row[1]
+            patient.age = row[2]
+            patient.doctor_id = row[3]
+        else:
+            patient = cls(row[1], row[2], row[3])
+            patient.patient_id = row[0]
+            cls.all[patient.patient_id] = patient
+        return patient
+
+    @classmethod
+    def get_all(cls):
+        sql = "SELECT * FROM patients;"
+        rows = CURSOR.execute(sql).fetchall()
+        return [cls.instance_from_db(row) for row in rows]
+
+    @classmethod
+    def find_by_name(cls, name):
+        sql = "SELECT * FROM patients WHERE name = ?;"
+        row = CURSOR.execute(sql, (name,)).fetchone()
+        return cls.instance_from_db(row) if row else None
+
+    @classmethod
+    def find_by_id(cls, patient_id):
+        sql = "SELECT * FROM patients WHERE patient_id = ?;"
+        row = CURSOR.execute(sql, (patient_id,)).fetchone()
+        return cls.instance_from_db(row) if row else None
