@@ -1,6 +1,6 @@
 # lib/cli.py
 
-from helpers import (
+from lib.testing.helpers import (
     exit_program,
     helper_1
 )
