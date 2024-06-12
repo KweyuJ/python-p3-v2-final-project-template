@@ -12,7 +12,7 @@ class Patient:
         self.doctor_id = doctor_id
 
     def __repr__(self):
-        return f"<Patient {self.patient_id}: name={self.name}, age={self.age}, gender={self.gender}, weight={self.weight}, doctorid={self.doctor_id}>"
+        return f"<Patient {self.patient_id}: name={self.name}, age={self.age}, gender={self.gender}, weight={self.weight}, doctor_id={self.doctor_id}>"
 
     @property
     def name(self):
@@ -24,17 +24,6 @@ class Patient:
             self._name = name
         else:
             raise ValueError("Name must be a non-empty string")
-
-    @property
-    def age(self):
-        return self._age
-
-    @age.setter
-    def age(self, age):
-        if isinstance(age, int) and age >= 0:
-            self._age = age
-        else:
-            raise ValueError("Age must be a non-negative integer")
 
     @property
     def gender(self):

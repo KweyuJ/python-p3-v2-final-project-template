@@ -34,17 +34,6 @@ class Doctor:
         else:
             raise ValueError("Specialization must be a non-empty string")
 
-    @property
-    def years_of_experience(self):
-        return self._years_of_experience
-
-    @years_of_experience.setter
-    def years_of_experience(self, years):
-        if isinstance(years, int) and years >= 0:
-            self._years_of_experience = years
-        else:
-            raise ValueError("Years of experience must be a non-negative integer")
-
     @classmethod
     def create_table(cls):
         sql = """
@@ -86,7 +75,7 @@ class Doctor:
             SET name = ?, specialization = ?, years_of_experience = ?
             WHERE doctor_id = ?;
         """
-        CURSOR.execute(sql, (self.name, self.specialization, self.years_of_experience, self.id))
+        CURSOR.execute(sql, (self.name, self.specialization, self.years_of_experience, self.doctor_id))
         CONN.commit()
 
     def delete(self):
@@ -94,10 +83,10 @@ class Doctor:
             DELETE FROM doctors
             WHERE doctor_id = ?;
         """
-        CURSOR.execute(sql, (self.id,))
+        CURSOR.execute(sql, (self.doctor_id,))
         CONN.commit()
-        del type(self).all[self.id]
-        self.id = None
+        del type(self).all[self.doctor_id]
+        self.doctor_id = None
 
     @classmethod
     def instance_from_db(cls, row):
@@ -108,10 +97,10 @@ class Doctor:
             doctor.years_of_experience = row[3]
         else:
             doctor = cls(row[1], row[2], row[3])
-            doctor.id = row[0]
-            cls.all[doctor.id] = doctor
+            doctor.doctor_id = row[0]  
+            cls.all[doctor.doctor_id] = doctor
         return doctor
-    
+
     @classmethod
     def get_all(cls):
         sql = "SELECT * FROM doctors;"
@@ -124,8 +113,6 @@ class Doctor:
         row = CURSOR.execute(sql, (name,)).fetchone()
         return cls.instance_from_db(row) if row else None
 
-    
-    
     @classmethod
     def find_by_id(cls, doctor_id):
         sql = "SELECT * FROM doctors WHERE doctor_id = ?;"
@@ -135,5 +122,5 @@ class Doctor:
     def patients(self):
         from models.patients import Patient
         sql = "SELECT * FROM patients WHERE doctor_id = ?;"
-        rows = CURSOR.execute(sql, (self.id,)).fetchall()
+        rows = CURSOR.execute(sql, (self.doctor_id,)).fetchall()
         return [Patient.instance_from_db(row) for row in rows]

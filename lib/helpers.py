@@ -2,183 +2,150 @@ from models.doctors import Doctor
 from models.patients import Patient
 from models.diagnosis import Diagnosis
 
-
 def exit_program():
-    print("Goodbye!")
+    print("Exiting program.")
     exit()
 
-
-# Doctor functions
 def list_doctors():
     doctors = Doctor.get_all()
-    if not doctors:
-        print("No doctors found.")
     for doctor in doctors:
         print(doctor)
 
 def find_doctor_by_name():
     name = input("Enter the doctor's name: ")
     doctor = Doctor.find_by_name(name)
-    print(doctor) if doctor else print(f'Doctor {name} not found')
+    if doctor:
+        print(doctor)
+    else:
+        print(f"No doctor found with name {name}")
 
 def find_doctor_by_id():
-    id_ = input("Enter the doctor's id: ")
-    doctor = Doctor.find_by_id(id_)
-    print(doctor) if doctor else print(f'Doctor {id_} not found')
+    doctor_id = int(input("Enter the doctor's id: "))
+    doctor = Doctor.find_by_id(doctor_id)
+    if doctor:
+        print(doctor)
+    else:
+        print(f"No doctor found with id {doctor_id}")
 
 def create_doctor():
     name = input("Enter the doctor's name: ")
     specialization = input("Enter the doctor's specialization: ")
-    experience = input("Enter the doctor's years of experience: ")
-    try:
-        doctor = Doctor.create(name, specialization, experience)
-        print(f'Success: {doctor}')
-    except Exception as exc:
-        print("Error creating doctor: ", exc)
+    years_of_experience = int(input("Enter the doctor's years of experience: "))
+    doctor = Doctor.create(name, specialization, years_of_experience)
+    print(f"Created doctor: {doctor}")
 
 def update_doctor():
-    id_ = input("Enter the doctor's id: ")
-    doctor = Doctor.find_by_id(id_)
+    doctor_id = int(input("Enter the doctor's id to update: "))
+    doctor = Doctor.find_by_id(doctor_id)
     if doctor:
-        try:
-            name = input("Enter the doctor's new name: ")
-            doctor.name = name
-            specialization = input("Enter the doctor's new specialization: ")
-            doctor.specialization = specialization
-            experience = input("Enter the doctor's new years of experience: ")
-            doctor.years_of_experience = experience
-
-            doctor.update()
-            print(f'Success: {doctor}')
-        except Exception as exc:
-            print("Error updating doctor: ", exc)
+        doctor.name = input("Enter the doctor's new name: ")
+        doctor.specialization = input("Enter the doctor's new specialization: ")
+        doctor.years_of_experience = int(input("Enter the doctor's new years of experience: "))
+        doctor.update()
+        print(f"Updated doctor: {doctor}")
     else:
-        print(f'Doctor {id_} not found')
+        print(f"No doctor found with id {doctor_id}")
 
 def delete_doctor():
-    id_ = input("Enter the doctor's id: ")
-    doctor = Doctor.find_by_id(id_)
+    doctor_id = int(input("Enter the doctor's id to delete: "))
+    doctor = Doctor.find_by_id(doctor_id)
     if doctor:
         doctor.delete()
-        print(f'Doctor {id_} deleted')
+        print(f"Deleted doctor with id {doctor_id}")
     else:
-        print(f'Doctor {id_} not found')
+        print(f"No doctor found with id {doctor_id}")
 
-
-# Patient functions
 def list_patients():
     patients = Patient.get_all()
-    if not patients:
-        print("No patients found.")
     for patient in patients:
         print(patient)
 
 def find_patient_by_name():
     name = input("Enter the patient's name: ")
     patient = Patient.find_by_name(name)
-    print(patient) if patient else print(f'Patient {name} not found')   
+    if patient:
+        print(patient)
+    else:
+        print(f"No patient found with name {name}")
 
 def find_patient_by_id():
-    id_ = input("Enter the patient's id: ")
-    patient = Patient.find_by_id(id_)
-    print(patient) if patient else print(f'Patient {id_} not found')  
+    patient_id = int(input("Enter the patient's id: "))
+    patient = Patient.find_by_id(patient_id)
+    if patient:
+        print(patient)
+    else:
+        print(f"No patient found with id {patient_id}")
 
 def create_patient():
     name = input("Enter the patient's name: ")
-    age = input("Enter the patient's age: ")
-    gender = input("Enter the patient's gender: ")
-    weight = input("Enter the patient's weight: ")
-    doctor_id = input("Enter the doctor's id :")
-
-    try:
-        patient = Patient.create(name, age, gender, weight, doctor_id)
-        print(f'Success: {patient}')
-    except Exception as exc:
-        print("Error creating patient: ", exc)  
+    age = int(input("Enter the patient's age: "))
+    gender = input("Enter the patient's gender (Male, Female, Other): ")
+    weight = float(input("Enter the patient's weight: "))
+    doctor_id = int(input("Enter the patient's doctor id: "))
+    patient = Patient.create(name, age, gender, weight, doctor_id)
+    print(f"Created patient: {patient}")
 
 def update_patient():
-    id_ = input("Enter the patient's id: ")
-    patient = Patient.find_by_id(id_)
+    patient_id = int(input("Enter the patient's id to update: "))
+    patient = Patient.find_by_id(patient_id)
     if patient:
-        try:
-            name = input("Enter the patient's new name: ")
-            patient.name = name
-            age = input("Enter the patient's new age: ")
-            patient.age = age
-            gender = input("Enter the patient's new gender: ")
-            patient.gender = gender
-            weight = input("Enter the patient's new weight: ")
-            patient.weight = weight
-            doctor_id = input("Enter the patient's new doctor id: ")
-            patient.doctor_id = doctor_id
-
-            patient.update()
-            print(f'Success: {patient}')
-        except Exception as exc:
-            print("Error updating patient: ", exc)
+        patient.name = input("Enter the patient's new name: ")
+        patient.age = int(input("Enter the patient's new age: "))
+        patient.gender = input("Enter the patient's new gender (Male, Female, Other): ")
+        patient.weight = float(input("Enter the patient's new weight: "))
+        patient.doctor_id = int(input("Enter the patient's new doctor id: "))
+        patient.update()
+        print(f"Updated patient: {patient}")
     else:
-        print(f'Patient {id_} not found')
+        print(f"No patient found with id {patient_id}")
 
 def delete_patient():
-    id_ = input("Enter the patient's id: ")
-    patient = Patient.find_by_id(id_)
+    patient_id = int(input("Enter the patient's id to delete: "))
+    patient = Patient.find_by_id(patient_id)
     if patient:
         patient.delete()
-        print(f'Patient {id_} deleted')
+        print(f"Deleted patient with id {patient_id}")
     else:
-        print(f'Patient {id_} not found')
+        print(f"No patient found with id {patient_id}")
 
-
-# Diagnosis functions
 def list_diagnoses():
     diagnoses = Diagnosis.get_all()
-    if not diagnoses:
-        print("No diagnoses found.")
     for diagnosis in diagnoses:
         print(diagnosis)
 
 def find_diagnosis_by_patient_id():
-    patient_id = input("Enter the patient's id: ")
+    patient_id = int(input("Enter the patient's id: "))
     diagnoses = Diagnosis.find_by_patient_id(patient_id)
     if diagnoses:
         for diagnosis in diagnoses:
             print(diagnosis)
     else:
-        print(f'No diagnoses found for patient id {patient_id}')
+        print(f"No diagnoses found for patient id {patient_id}")
 
 def create_diagnosis():
-    patient_id = input("Enter the patient's id: ")
-    doctor_id = input("Enter the doctor's id: ")
-    condition = input("Enter the diagnosis condition: ")
-    treatment = input("Enter the treatment: ")
-    try:
-        diagnosis = Diagnosis.create(patient_id, doctor_id, condition, treatment)
-        print(f'Success: {diagnosis}')
-    except Exception as exc:
-        print("Error creating diagnosis: ", exc)
+    patient_id = int(input("Enter the patient's id: "))
+    description = input("Enter the diagnosis description: ")
+    date = input("Enter the diagnosis date (YYYY-MM-DD): ")
+    diagnosis = Diagnosis.create(patient_id, description, date)
+    print(f"Created diagnosis: {diagnosis}")
 
 def update_diagnosis():
-    id_ = input("Enter the diagnosis id: ")
-    diagnosis = Diagnosis.find_by_id(id_)
+    diagnosis_id = int(input("Enter the diagnosis id to update: "))
+    diagnosis = Diagnosis.find_by_id(diagnosis_id)
     if diagnosis:
-        try:
-            condition = input("Enter the new diagnosis condition: ")
-            diagnosis.condition = condition
-            treatment = input("Enter the new treatment: ")
-            diagnosis.treatment = treatment
-
-            diagnosis.update()
-            print(f'Success: {diagnosis}')
-        except Exception as exc:
-            print("Error updating diagnosis: ", exc)
+        diagnosis.patient_id = int(input("Enter the new patient id: "))
+        diagnosis.description = input("Enter the new diagnosis description: ")
+        diagnosis.date = input("Enter the new diagnosis date (YYYY-MM-DD): ")
+        diagnosis.update()
+        print(f"Updated diagnosis: {diagnosis}")
     else:
-        print(f'Diagnosis {id_} not found')
+        print(f"No diagnosis found with id {diagnosis_id}")
 
 def delete_diagnosis():
-    id_ = input("Enter the diagnosis id: ")
-    diagnosis = Diagnosis.find_by_id(id_)
+    diagnosis_id = int(input("Enter the diagnosis id to delete: "))
+    diagnosis = Diagnosis.find_by_id(diagnosis_id)
     if diagnosis:
         diagnosis.delete()
-        print(f'Diagnosis {id_} deleted')
+        print(f"Deleted diagnosis with id {diagnosis_id}")
     else:
-        print(f'Diagnosis {id_} not found')
+        print(f"No diagnosis found with id {diagnosis_id}")
