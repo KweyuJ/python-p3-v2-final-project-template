@@ -1,5 +1,4 @@
-from config.__init__ import CURSOR, CONN
-
+from config import CURSOR, CONN
 
 class Patient:
     all = {}
@@ -114,10 +113,10 @@ class Patient:
     def update(self):
         sql = """
             UPDATE patients
-            SET name = ?, age = ?, doctor_id = ?
+            SET name = ?, age = ?, gender = ?, weight = ?, doctor_id = ?
             WHERE patient_id = ?;
         """
-        CURSOR.execute(sql, (self.name, self.age, self.doctor_id, self.patient_id))
+        CURSOR.execute(sql, (self.name, self.age, self.gender, self.weight, self.doctor_id, self.patient_id))
         CONN.commit()
 
     def delete(self):
@@ -131,12 +130,14 @@ class Patient:
     def instance_from_db(cls, row):
         patient = cls.all.get(row[0])
         if patient:
+            patient.patient_id = row[0]
             patient.name = row[1]
             patient.age = row[2]
-            patient.doctor_id = row[3]
+            patient.gender = row[3]
+            patient.weight = row[4]
+            patient.doctor_id = row[5]
         else:
-            patient = cls(row[1], row[2], row[3])
-            patient.patient_id = row[0]
+            patient = cls(row[1], row[2], row[3], row[4], row[5], patient_id=row[0])
             cls.all[patient.patient_id] = patient
         return patient
 

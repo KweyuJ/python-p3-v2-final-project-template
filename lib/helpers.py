@@ -1,21 +1,18 @@
-# lib/helpers.py
+from models.doctors import Doctor
+from models.patients import Patient
+from models.diagnosis import Diagnosis
 
-# def helper_1():
-#     print("Performing useful function#1.")
-
-# lib/helpers.py
 
 def exit_program():
     print("Goodbye!")
     exit()
 
-from models.doctors import Doctor
-from models.patients import Patient
-from models.diagnosis import Diagnosis
 
 # Doctor functions
 def list_doctors():
     doctors = Doctor.get_all()
+    if not doctors:
+        print("No doctors found.")
     for doctor in doctors:
         print(doctor)
 
@@ -41,7 +38,8 @@ def create_doctor():
 
 def update_doctor():
     id_ = input("Enter the doctor's id: ")
-    if doctor := Doctor.find_by_id(id_):
+    doctor = Doctor.find_by_id(id_)
+    if doctor:
         try:
             name = input("Enter the doctor's new name: ")
             doctor.name = name
@@ -59,15 +57,19 @@ def update_doctor():
 
 def delete_doctor():
     id_ = input("Enter the doctor's id: ")
-    if doctor := Doctor.find_by_id(id_):
+    doctor = Doctor.find_by_id(id_)
+    if doctor:
         doctor.delete()
         print(f'Doctor {id_} deleted')
     else:
         print(f'Doctor {id_} not found')
 
+
 # Patient functions
 def list_patients():
     patients = Patient.get_all()
+    if not patients:
+        print("No patients found.")
     for patient in patients:
         print(patient)
 
@@ -96,7 +98,8 @@ def create_patient():
 
 def update_patient():
     id_ = input("Enter the patient's id: ")
-    if patient := Patient.find_by_id(id_):
+    patient = Patient.find_by_id(id_)
+    if patient:
         try:
             name = input("Enter the patient's new name: ")
             patient.name = name
@@ -118,15 +121,19 @@ def update_patient():
 
 def delete_patient():
     id_ = input("Enter the patient's id: ")
-    if patient := Patient.find_by_id(id_):
+    patient = Patient.find_by_id(id_)
+    if patient:
         patient.delete()
         print(f'Patient {id_} deleted')
     else:
         print(f'Patient {id_} not found')
 
+
 # Diagnosis functions
 def list_diagnoses():
     diagnoses = Diagnosis.get_all()
+    if not diagnoses:
+        print("No diagnoses found.")
     for diagnosis in diagnoses:
         print(diagnosis)
 
@@ -152,7 +159,8 @@ def create_diagnosis():
 
 def update_diagnosis():
     id_ = input("Enter the diagnosis id: ")
-    if diagnosis := Diagnosis.find_by_id(id_):
+    diagnosis = Diagnosis.find_by_id(id_)
+    if diagnosis:
         try:
             condition = input("Enter the new diagnosis condition: ")
             diagnosis.condition = condition
@@ -168,14 +176,9 @@ def update_diagnosis():
 
 def delete_diagnosis():
     id_ = input("Enter the diagnosis id: ")
-    if diagnosis := Diagnosis.find_by_id(id_):
+    diagnosis = Diagnosis.find_by_id(id_)
+    if diagnosis:
         diagnosis.delete()
         print(f'Diagnosis {id_} deleted')
     else:
         print(f'Diagnosis {id_} not found')
-
-
-
-
-
-
