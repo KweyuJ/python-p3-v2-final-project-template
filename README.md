@@ -13,13 +13,13 @@ A Python CLI application that helps manage patient records, including their diag
 
 ## MINIMAL VIABLE PRODUCT(MVP)
 
-#    1.Database Management with ORM Methods
+###   1.Database Management with ORM Methods
 
 Implemented a database using Python ORM methods to handle data storage and manipulation.
 The data model includes three primary classes: Doctor, Patient, and Diagnosis.
 Established one-to-many relationships where each doctor can have multiple patients, and each patient can have multiple diagnoses.
 
-#    2.Data Model Requirements
+###    2.Data Model Requirements
 
 Doctor class
 Attributes: doctor_id (primary key), name, specialization, and years_of_experience.
@@ -30,14 +30,14 @@ Attributes: diagnosis_id (primary key), patient_id (foreign key), description, a
 Property methods to add constraints to ensure valid data entry.
 ORM methods for each class to create, delete, get all, and find by name.
 
-#    3.CLI Requirements
+###    3.CLI Requirements
 
 A user-friendly CLI that displays interactive menus for users to navigate through the application.
 Options for each class to create an object, delete an object, display all objects, view related objects, and find an object by attribute.
 User input validation and informative error messages to guide users through the process.
 The CLI will use loops to keep the user in the application until they choose to exit.
 
-### Installation
+## Installation
 1.Clone the repository
 
 2.Navigate to the project directory
@@ -63,7 +63,7 @@ The CLI will use loops to keep the user in the application until they choose to 
 
 =>db/hospital.db :
 
-### Prerequisites
+## Prerequisites
 Python 3.x
 SQLite
 
