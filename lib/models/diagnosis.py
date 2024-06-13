@@ -111,3 +111,11 @@ class Diagnosis:
         sql = "SELECT * FROM diagnoses WHERE patient_id = ?;"
         rows = CURSOR.execute(sql, (patient_id,)).fetchall()
         return [cls.instance_from_db(row) for row in rows]
+
+    @classmethod
+    def find_by_id(cls, diagnosis_id):
+        sql = "SELECT * FROM diagnoses WHERE diagnosis_id = ?;"
+        row = CURSOR.execute(sql, (diagnosis_id,)).fetchone()
+        if row:
+            return cls.instance_from_db(row)
+        return None

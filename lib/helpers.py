@@ -131,7 +131,7 @@ def create_diagnosis():
 
 def update_diagnosis():
     diagnosis_id = int(input("Enter the diagnosis id to update: "))
-    diagnosis = Diagnosis.find_by_patient_id(diagnosis_id)
+    diagnosis = Diagnosis.find_by_id(diagnosis_id)
     if diagnosis:
         diagnosis.patient_id = int(input("Enter the new patient id: "))
         diagnosis.description = input("Enter the new diagnosis description: ")
@@ -140,6 +140,7 @@ def update_diagnosis():
         print(f"Updated diagnosis: {diagnosis}")
     else:
         print(f"No diagnosis found with id {diagnosis_id}")
+
 
 def delete_diagnosis():
     diagnosis_id = int(input("Enter the diagnosis id to delete: "))
