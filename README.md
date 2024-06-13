@@ -43,8 +43,8 @@ The CLI will use loops to keep the user in the application until they choose to 
 2.Navigate to the project directory
 
 3.Install required dependencies:
-    pipenv install
-    pipenv shell
+    -pipenv install
+    -pipenv shell
 
 4.To start the CLI application, run:
     python3 cli.py
@@ -61,11 +61,11 @@ The CLI will use loops to keep the user in the application until they choose to 
 => lib/seed.py: Populates the database with initial seed data for doctors, patients, and diagnoses. Useful for testing and development purposes.
 => config/__init__.py: Contains database connection setup.
 
-=>db/hospital.db :
+=>db/hospital.db :SQLite database file where all the data for the Medical Record Management System is stored. This includes information about doctors, patients, and diagnoses.
 
-## Prerequisites
-Python 3.x
-SQLite
+## Technologies used
+-Python 3.x
+-SQLite
 
 ## Support and contact details
 github.com/KweyuJ
